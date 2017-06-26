@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Song</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" sizes="32x32">
+    <meta name="keywords" content="Ekomers Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Custom Theme files -->
+    <link href="{{ url_for('static', filename='css/jquery.slinky.css') }}" rel='stylesheet' type='text/css'/>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- Custom Theme files -->
+    <!--webfont-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/highcharts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.slinky.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.6.0/APlayer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.fixedheadertable.min.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({scrollTop: $(this.hash).offset().top}, 1000);
+            });
+        });
+    </script>
+</head>
+<body onload="checkCookie()">
+<div id="header" class="header">
+    <div class="container">
+        <div class="header_top">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.gif') }}" width="100%" alt=""/>
+            </div>
+            <div class="top-nav">
+                <span class="menu"><img src="{{ url_for('static', filename='images/menu.png') }}" alt=""/></span>
+                <ul class="nav1">
+                    <li class="active"><a href="{{ url_for('home') }}">Home </a></li>
+                </ul>
+            </div>
+            <ul id="buttons" class="widget">
+                <a href="{{ url_for('register') }}">
+                    <li class="join">Join Now</li>
+                </a>
+                <a href="{{ url_for('login') }}">
+                    <li class="join">Login</li>
+                </a>
+            </ul>
+            <ul id="buttons1" class="widget" style="display: none">
+                <a href="#">
+                    <li class="join" id="username">User name</li>
+                </a>
+                <a href="#">
+                    <li class="join">Exit</li>
+                </a>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div id="content" class="container">
+            <div style="float:left; display: inline;">
+                <img src="{{ picUrl }}" style="height: 400px; width: 400px">
+            </div>
+            <div style="float: left; display:inline; margin-left: 10%">
+                <div style="margin-bottom: 3%">
+                    <span style="display: inline; font-size: 200%;">{{ data['songName'] }}</span>
+                </div>
+                <div id="menu" class="slinky-menu" style="width:500px; transition-duration: 300ms; float: left;">
+                    <ul style="transition-duration: 300ms;">
+                        <li>
+                            <a href="#">Singer: {{ data['singers'] }}</a>
+                        </li>
+                        <li>
+                            <a href="#">Composer: {{ data['composer'] }}</a>
+                        </li>
+                        <li>
+                            <a href="#">Song writers: {{ data['songwriters'] }}</a>
+                        </li>
+                        <li>
+                            <a href="#">Playcounts: {{ data['playCount'] }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <!--<span style="display: block; font-size: 130%;"></span>
+                <span style="display: block; font-size: 130%;">Album: {{ data['albumName'] }}</span>
+                <span style="display: block; font-size: 130%;">Composer: {{ data['composer'] }}</span>
+                <span style="display: block; font-size: 130%;">Song writers: {{ data['songwriters'] }}</span>
+                <span style="display: block; font-size: 130%;">Playcounts: {{ data['playCount'] }}</span>-->
+            </div>
+        </div>
+        <div id="musicPlayer" class="aplayer">
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#menu').slinky({
+            title: true,
+        });
+    });
+    function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=")
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1
+                c_end = document.cookie.indexOf(";", c_start)
+                if (c_end == -1) c_end = document.cookie.length
+                return unescape(document.cookie.substring(c_start, c_end))
+            }
+        }
+        return ""
+    }
+    function checkCookie() {
+        username = getCookie('userid')
+        if (username != null && username != "") {
+            $('#username').text(username);
+            document.getElementById("buttons1").style.display = "block"
+            document.getElementById("buttons").style.display = "none"
+        }
+        playSong();
+    }
+    var ap;
+    function playSong() {
+        ap = new APlayer({
+            element: document.getElementById('musicPlayer'),                       // Optional, player element
+            narrow: false,                                                     // Optional, narrow style
+            showlrc: 1,                                                        // Optional, show lrc, can be 0, 1, 2, see: ###With lrc
+            mutex: true,                                                       // Optional, pause other players when this player playing
+            theme: '#e6d0b2',                                                  // Optional, theme color, default: #b7daff
+            mode: 'random',                                                    // Optional, play mode, can be `random` `single` `circulation`(loop) `order`(no loop), default: `circulation`
+            preload: 'metadata',                                               // Optional, the way to load music, can be 'none' 'metadata' 'auto', default: 'auto'
+            listmaxheight: '513px',                                             // Optional, max height of play list
+            music: {
+                title: "{{ data['songName'] }}",
+                author: "{{ data['singers'] }}",
+                url: "{{ mp3Url }}",
+                pic: "{{ picUrl }}"
+            }
+        });
+        ap.play();
+    }
+</script>
+</body>
+</html>

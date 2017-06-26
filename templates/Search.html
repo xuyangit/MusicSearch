@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" sizes="32x32">
+    <meta name="keywords" content="Ekomers Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Custom Theme files -->
+    <link href="{{ url_for('static', filename='css/jquery.slinky.css') }}" rel='stylesheet' type='text/css'/>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- Custom Theme files -->
+    <!--webfont-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/highcharts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.slinky.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.6.0/APlayer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.fixedheadertable.min.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({scrollTop: $(this.hash).offset().top}, 1000);
+            });
+        });
+    </script>
+</head>
+<body onload="checkCookie()" onhashchange="hashChange()">
+<div id="header" class="header">
+    <div class="container">
+        <div class="header_top">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.gif') }}" width="100%" alt=""/>
+            </div>
+            <div class="top-nav">
+                <span class="menu"><img src="{{ url_for('static', filename='images/menu.png') }}" alt=""/></span>
+                <ul class="nav1">
+                    <li class="active"><a href="{{ url_for('home') }}">Home </a></li>
+                </ul>
+            </div>
+            <ul id="buttons" class="widget">
+                <a href="{{ url_for('register') }}">
+                    <li class="join">Join Now</li>
+                </a>
+                <a href="{{ url_for('login') }}">
+                    <li class="join">Login</li>
+                </a>
+            </ul>
+            <ul id="buttons1" class="widget" style="display: none">
+                <a href="#">
+                    <li class="join" id="username">User name</li>
+                </a>
+                <a href="#">
+                    <li class="join">Exit</li>
+                </a>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div id="menu" class="slinky-menu" style="transition-duration: 300ms; float: left;">
+            <ul style="transition-duration: 300ms;">
+                <li>
+                    <a href="#songName">Song name/Lyric</a>
+                </li>
+                <li>
+                    <a href="#singer">Singer</a>
+                </li>
+                <li>
+                    <a href="#albumName">Album name</a>
+                </li>
+                <li>
+                    <a href="#composer">Composer/Song writer</a>
+                </li>
+            </ul>
+        </div>
+        <div id="content" style="overflow-x: auto; overflow-y: auto; height: 600px; width:60%; padding-left: 3%;">
+            <section id="songName">
+                <table id="resultBySongName" name="resultBySongName" class="gridtable">
+                    <thead>
+                        <tr>
+                            <th>Song Name</th>
+                            <th>Singers</th>
+                            <th>Album Name</th>
+                            <th>Listen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row_index in range(data['resultBySongName']|count) %}
+                        <tr>
+                            <td>{{ data['resultBySongName'][row_index]['songName'] }}</td>
+                            <td>{{ data['resultBySongName'][row_index]['singers'] }}</td>
+                            <td>{{ data['resultBySongName'][row_index]['albumName'] }}</td>
+                            <td>
+                                <button onclick='playSong("{{ data['resultBySongName'][row_index]['songId']|string }}")'>
+                                    Play
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section id="singer" style="display: none">
+                <table id="resultBySingers" name="resultBySingers" class="gridtable">
+                    <thead>
+                    <tr>
+                        <th>Singers</th>
+                        <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row_index in range(data['resultBySinger']|count) %}
+                    <tr>
+                        <td>{{ data['resultBySinger'][row_index]['singers'] }}</td>
+                        <td>
+                            <button onclick='getSingerDetail("{{ data['resultBySinger'][row_index]['singers'] }}")'>
+                            Get Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section id="albumName" style="display: none">
+                <table id="resultByAlbum" name="resultByAlbum" class="gridtable">
+                    <thead>
+                    <tr>
+                        <th>Album Name</th>
+                        <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row_index in range(data['resultByAlbum']|count) %}
+                    <tr>
+                        <td>{{ data['resultByAlbum'][row_index]['albumName'] }}</td>
+                        <td>
+                            <button onclick='getAlbumDetail("{{ data['resultByAlbum'][row_index]['albumName'] }}")'>
+                            Get Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section id="composer" style="display: none">
+                <table id="resultByComposer" name="resultByComposer" class="gridtable">
+                    <thead>
+                    <tr>
+                        <th>Composers</th>
+                        <th>Song Writers</th>
+                        <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row_index in range(data['resultByComposer']|count) %}
+                    <tr>
+                        <td>{{ data['resultByComposer'][row_index]['composer'] }}</td>
+                        <td>{{ data['resultByComposer'][row_index]['songwriters'] }}</td>
+                        <td>
+                            <button onclick='getAlbumDetail("{{ data['resultByComposer'][row_index]['composer'] }}")'>
+                            Get Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        <div id="musicPlayer" class="aplayer">
+
+        </div>
+    </div>
+</div>
+<script>
+    var clickCount = 0;
+    $(document).ready(function() {
+        hashChange();
+        $('#menu').slinky({
+            title: true,
+        });
+    });
+    function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=")
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1
+                c_end = document.cookie.indexOf(";", c_start)
+                if (c_end == -1) c_end = document.cookie.length
+                return unescape(document.cookie.substring(c_start, c_end))
+            }
+        }
+        return ""
+    }
+    function checkCookie() {
+        username = getCookie('userid')
+        if (username != null && username != "") {
+            $('#username').text(username);
+            document.getElementById("buttons1").style.display = "block"
+            document.getElementById("buttons").style.display = "none"
+        }
+    }
+    $('#resultBySongName').fixedHeaderTable('show');
+    var ap;
+    var songMap = new Object();
+    function getSongValue(name) {
+        return songMap[name];
+    }
+    function getSingerDetail(singers) {
+        window.location = "https://202.120.32.216:10001/getSinger?singers=" + singers;
+    }
+    function getAlbumDetail(albumName) {
+        window.location = "https://202.120.32.216:10001/getAlbum?albumName=" + albumName;
+    }
+    function playSong(songId) {
+        var ajaxCall = new XMLHttpRequest();
+        ajaxCall.open("get", "getSongInfo?songId=" + songId, false);
+        ajaxCall.onreadystatechange = function () {
+            jsonObject = JSON.parse(ajaxCall.responseText);
+            if(clickCount == 0) {
+                songMap[jsonObject.result.songName] = clickCount;
+                ap = new APlayer({
+                    element: document.getElementById('musicPlayer'),                       // Optional, player element
+                    narrow: false,                                                     // Optional, narrow style
+                    showlrc: 1,                                                        // Optional, show lrc, can be 0, 1, 2, see: ###With lrc
+                    mutex: true,                                                       // Optional, pause other players when this player playing
+                    theme: '#e6d0b2',                                                  // Optional, theme color, default: #b7daff
+                    mode: 'random',                                                    // Optional, play mode, can be `random` `single` `circulation`(loop) `order`(no loop), default: `circulation`
+                    preload: 'metadata',                                               // Optional, the way to load music, can be 'none' 'metadata' 'auto', default: 'auto'
+                    listmaxheight: '513px',                                             // Optional, max height of play list
+                    music: {
+                        title: jsonObject.result.songName,
+                        author: jsonObject.result.singers,
+                        url: "https://202.120.32.216:10001/getMp3/" + jsonObject.result.singers + "/" +
+                        jsonObject.result.albumName + "/" + jsonObject.result.songName + ".mp3",
+                        pic: "https://202.120.32.216:10001/getPic/" + jsonObject.result.singers + "/" +
+                        jsonObject.result.albumName + "/" + jsonObject.result.songName + ".jpg",
+                        lrc: jsonObject.result.lyric
+                    }
+                });
+                ap.setMusic(clickCount);
+                ap.play();
+                clickCount += 1;
+            }
+            else {
+                ap.pause();
+                if(getSongValue(jsonObject.result.songName) == null) {
+                    songMap[jsonObject.result.songName] = clickCount;
+                    ap.addMusic([
+                        {
+                            title: jsonObject.result.songName,
+                            author: jsonObject.result.singers,
+                            url: "https://202.120.32.216:10001/getMp3/" + jsonObject.result.singers + "/" +
+                            jsonObject.result.albumName + "/" + jsonObject.result.songName + ".mp3",
+                            pic: "https://202.120.32.216:10001/getPic/" + jsonObject.result.singers + "/" +
+                            jsonObject.result.albumName + "/" + jsonObject.result.songName + ".jpg",
+                            lrc: jsonObject.result.lyric
+                        }
+                    ]);
+                    ap.setMusic(clickCount);
+                    clickCount += 1;
+                }
+                else {
+                    ap.setMusic(songMap[jsonObject.result.songName]);
+                }
+                ap.play();
+            }
+        };
+        ajaxCall.send();
+
+    }
+    function hashChange() {
+        var hash = window.location.hash.slice(1);
+        if (!hash) {
+            hash = "songName";
+        }
+        document.getElementById("songName").style.display = "none";
+        document.getElementById("singer").style.display = "none";
+        document.getElementById("albumName").style.display = "none";
+        document.getElementById("composer").style.display = "none";
+        document.getElementById(hash).style.display = "block";
+    }
+</script>
+</body>
+</html>

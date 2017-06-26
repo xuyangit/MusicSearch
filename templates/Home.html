@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" sizes="32x32">
+    <meta name="keywords" content="Ekomers Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Custom Theme files -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- Custom Theme files -->
+    <!--webfont-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/highcharts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({scrollTop: $(this.hash).offset().top}, 1000);
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="header" class="header">
+    <div class="container">
+        <div class="header_top">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.gif') }}" width="100%" alt=""/>
+            </div>
+            <div class="top-nav">
+                <ul class="nav1">
+                    <li class="active"><a href="{{ url_for('home') }}">Home </a></li>
+                </ul>
+            </div>
+            <ul id="buttons" class="widget">
+                <a href="{{ url_for('register') }}">
+                    <li class="join">Join Now</li>
+                </a>
+                <a href="{{ url_for('login') }}">
+                    <li class="join">Login</li>
+                </a>
+            </ul>
+            <ul id="buttons1" class="widget" style="display: none">
+                <a href="#">
+                    <li class="join" id="username">User name</li>
+                </a>
+                <a href="#">
+                    <li class="join">Exit</li>
+                </a>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="wmuSlider example1">
+            <article style="position: relative; width: 100%; opacity: 1;">
+                <div class="banner-wrap">
+                    <div class="header_desc">
+                        <form action='searchAll' id="searchAllForm" method='post'>
+                            <input name="queryword" width="50%" id="queryword" type="text">
+                            <div class="button">
+                                <input type="submit" class="head_but" onclick="setKeywordCookie()" value="Search for cute music!">
+                                <input type="button" class="head_but" onclick="uploadSegments()" value="Upload for search!">
+                            </div>
+                        </form>
+                        <form id="uploadbanner" enctype="multipart/form-data" style="display: none" method="post" action="searchBySeg">
+                            <input id="fileupload" name="data" type="file" />
+                            <input type="submit" value="submit" id="submit" />
+                        </form>
+                        <img id="record" src="{{ url_for('static', filename='images/mic.png') }}" onclick="toggleRecording(this);">
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=")
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1
+                c_end = document.cookie.indexOf(";", c_start)
+                if (c_end == -1) c_end = document.cookie.length
+                return unescape(document.cookie.substring(c_start, c_end))
+            }
+        }
+        return ""
+    }
+    function checkCookie() {
+        username = getCookie('userid')
+        if (username != null && username != "") {
+            $('#username').text(username);
+            document.getElementById("buttons1").style.display = "block"
+            document.getElementById("buttons").style.display = "none"
+        }
+    }
+    function setKeywordCookie() {
+        createCookie("keyword", $('#queryword').val(), 10)
+    }
+    function createCookie(name,value,days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + value + expires + "; path=/";
+    }
+    var audio_context;
+    var recorder;
+    function startUserMedia(stream) {
+        var input = audio_context.createMediaStreamSource(stream);
+
+        // Uncomment if you want the audio to feedback directly
+        //input.connect(audio_context.destination);
+        //__log('Input connected to audio context destination.');
+        recorder = new Recorder(input);
+    }
+    function uploadSegments() {
+        document.getElementById("uploadbanner").style.display = "block";
+    }
+    window.onload = function init() {
+        checkCookie();
+        try {
+            // webkit shim
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+            window.URL = window.URL || window.webkitURL;
+
+            audio_context = new AudioContext;
+        } catch (e) {
+            alert('No web audio support in this browser!');
+        }
+        navigator.getUserMedia({audio: true}, startUserMedia, function (e) {
+        });
+    }
+    function toggleRecording(button) {
+        if(button.classList.contains("recording")) {
+            button.classList.remove("recording");
+            recorder && recorder.stop();
+            recorder && upload();
+            recorder && recorder.clear();
+        }
+        else {
+            button.classList.add("recording");
+            recorder && recorder.record();
+        }
+    }
+    function upload() {
+        recorder && recorder.exportWAV(function(blob) {
+            var fd = new FormData();
+            fd.append('data', blob);
+            $.ajax({
+                type: 'POST',
+                url: 'searchByWav',
+                data: fd,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function (data, textStatus) {
+                    if(data.err == '') {
+                        window.location = data.redirect;
+                    }
+                    else {
+                        alert("No matching result!");
+                    }
+                }
+            });
+        });
+    }
+
+</script>
+</html>		

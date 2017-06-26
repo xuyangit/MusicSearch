@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="Ekomers Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Custom Theme files -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- Custom Theme files -->
+    <!--webfont-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+</head>
+<body>
+<div id="container">
+    <div id="header" class="login_header">
+        <div class="container">
+            <div class="header_top">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.gif') }}" width="100%" alt=""/>
+                </div>
+                <div class="top-nav">
+                    <ul class="nav1">
+                        <li class="active"><a href="{{ url_for('home') }}">Home </a></li>
+                    </ul>
+                </div>
+                <ul id="buttons" class="widget">
+                    <a href="{{ url_for('register') }}">
+                        <li class="join">Join Now</li>
+                    </a>
+                    <a href="{{ url_for('login') }}">
+                        <li class="join">Login</li>
+                    </a>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div id="content" class="container">
+        <div class="register">
+            <div class="col-md-6 login-left">
+                <h3>New Customers</h3>
+                <p>By creating an account with our store, you will be able to move through the checkout process faster,
+                    store multiple shipping addresses, view and track your orders in your account and more.</p>
+                <a class="acount-btn" href="{{ url_for('register') }}">Create an Account</a>
+            </div>
+
+            <div class="col-md-6 login-right">
+                <h3>Registered Customers</h3>
+                <p>If you have an account with us, please log in.</p>
+                <form action='loginUser' id="oLoginForm" method='post'>
+                    <div>
+                        <span><label for="userid">User Name*</label></span>
+                        <input name="userid" id="userid" type="text">
+                    </div>
+                    <div>
+                        <span><label for='password'>Password*</label></span>
+                        <input name='password' id='password' type="password">
+                    </div>
+                    <div id="oTip" class="error hide">
+                        <i class="error"></i>
+                        <span class="error">
+                        Invalid username or password
+					  </span>
+                    </div>
+                    <a class="forgot" href="#">Forgot Your Password?</a>
+                    <input type="submit" value="Login">
+                </form>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $('#oLoginForm').submit(function (e) {
+        e.preventDefault();
+        $.post('loginUser', $(this).serialize(), function (data) {
+            if (data.err && data.err != '') {
+                $('#oTip').removeClass('hide');
+            } else if (data.redirect) {
+                window.location = data.redirect;
+            }
+        }, "json");
+    });
+</script>
+</html>		
